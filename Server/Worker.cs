@@ -11,9 +11,9 @@ namespace Server
     public class Worker : BackgroundService
     {
         private readonly ILogger<Worker> _logger;
-        private IHubContext<ClockHub> _clockHub;
+        private readonly IHubContext<ClockHub, IClock> _clockHub;
 
-        public Worker(ILogger<Worker> logger, IHubContext<ClockHub> clockHub)
+        public Worker(ILogger<Worker> logger, IHubContext<ClockHub, IClock> clockHub)
         {
             _logger = logger;
             _clockHub = clockHub;
@@ -21,10 +21,10 @@ namespace Server
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            while(!stoppingToken.IsCancellationRequested)
+            while (!stoppingToken.IsCancellationRequested)
             {
                 _logger.LogInformation($"Worker running at: {DateTime.Now}");
-                await _clockHub.Clients.All.SendAsync(Strings.Events.TimeSent, DateTime.Now);
+                await _clockHub.Clients.All.ShowTime(DateTime.Now);
                 await Task.Delay(1000);
             }
         }

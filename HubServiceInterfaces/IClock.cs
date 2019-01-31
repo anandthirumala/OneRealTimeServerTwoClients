@@ -1,9 +1,10 @@
 ﻿using System;
+using System.Threading.Tasks;
 
 namespace HubServiceInterfaces
 {
     public interface IClock
     {
-        void ShowTime(DateTime currentTime);
+        Task ShowTime(DateTime currentTime);
     }
 }
