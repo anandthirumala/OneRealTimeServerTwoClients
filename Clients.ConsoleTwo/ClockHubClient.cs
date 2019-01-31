@@ -1,12 +1,14 @@
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 using HubServiceInterfaces;
 using Microsoft.AspNetCore.SignalR.Client;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
 namespace Clients.ConsoleTwo
 {
-    public class ClockHubClient : IClock
+    public class ClockHubClient : IClock, IHostedService
     {
         private readonly ILogger<ClockHubClient> _logger;
         private HubConnection _connection;
@@ -19,15 +21,36 @@ namespace Clients.ConsoleTwo
                 .WithUrl(Strings.HubUrl)
                 .Build();
 
-            _connection.On<DateTime>(Strings.Events.TimeSent, 
-                (dateTime) => ShowTime(dateTime));
-
-            _connection.StartAsync().Wait();
+            _connection.On<DateTime>(Strings.Events.TimeSent, dateTime => _ = ShowTime(dateTime));
         }
 
-        public void ShowTime(DateTime currentTime)
+        public Task ShowTime(DateTime currentTime)
         {
             _logger.LogInformation($"{currentTime.ToShortTimeString()}");
+
+            return Task.CompletedTask;
+        }
+
+        public async Task StartAsync(CancellationToken cancellationToken)
+        {
+            while (true)
+            {
+                try
+                {
+                    await _connection.StartAsync(cancellationToken);
+
+                    break;
+                }
+                catch
+                {
+                    await Task.Delay(1000);
+                }
+            }
+        }
+
+        public Task StopAsync(CancellationToken cancellationToken)
+        {
+            return _connection.DisposeAsync();
         }
     }
 }

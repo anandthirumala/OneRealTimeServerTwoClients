@@ -7,18 +7,31 @@ namespace Clients.ConsoleOne
 {
     class Program
     {
-        static void Main(string[] args)
+        static async Task Main(string[] args)
         {
             var connection = new HubConnectionBuilder()
                 .WithUrl(Strings.HubUrl)
                 .Build();
 
-            connection.On<DateTime>(Strings.Events.TimeSent, (dateTime) => {
+            connection.On<DateTime>(Strings.Events.TimeSent, (dateTime) =>
+            {
                 Console.WriteLine(dateTime.ToString());
             });
 
-            connection.StartAsync();
-                
+            while (true)
+            {
+                try
+                {
+                    await connection.StartAsync();
+
+                    break;
+                }
+                catch
+                {
+                    await Task.Delay(1000);
+                }
+            }
+
             Console.WriteLine("Client One listening. Hit Ctrl-C to quit.");
             Console.ReadLine();
         }

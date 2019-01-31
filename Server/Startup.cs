@@ -27,7 +27,8 @@ namespace Server
                 app.UseDeveloperExceptionPage();
             }
 
-            app.UseSignalR((routes) => {
+            app.UseSignalR((routes) =>
+            {
                 routes.MapHub<ClockHub>("/hubs/clock");
             });
         }
