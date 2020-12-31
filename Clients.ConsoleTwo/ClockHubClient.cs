@@ -11,7 +11,7 @@ namespace Clients.ConsoleTwo
     public class ClockHubClient : IClock, IHostedService
     {
         private readonly ILogger<ClockHubClient> _logger;
-        private HubConnection _connection;
+        private readonly HubConnection _connection;
 
         public ClockHubClient(ILogger<ClockHubClient> logger)
         {
@@ -43,14 +43,14 @@ namespace Clients.ConsoleTwo
                 }
                 catch
                 {
-                    await Task.Delay(1000);
+                    await Task.Delay(1000, cancellationToken);
                 }
             }
         }
 
-        public Task StopAsync(CancellationToken cancellationToken)
+        public async Task StopAsync(CancellationToken cancellationToken)
         {
-            return _connection.DisposeAsync();
+            await _connection.StopAsync(cancellationToken);
         }
     }
 }

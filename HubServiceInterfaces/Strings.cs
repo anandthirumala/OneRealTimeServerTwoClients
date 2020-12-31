@@ -2,7 +2,7 @@ namespace HubServiceInterfaces
 {
     public static class Strings
     {
-        public static string HubUrl => "https://localhost:5001/hubs/clock";
+        public static string HubUrl => "https://localhost:44381/hubs/clock";
 
         public static class Events
         {
