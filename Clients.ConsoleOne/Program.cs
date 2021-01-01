@@ -1,39 +1,25 @@
-﻿using System;
-using System.Threading.Tasks;
-using HubServiceInterfaces;
-using Microsoft.AspNetCore.SignalR.Client;
+﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 
 namespace Clients.ConsoleOne
 {
-    class Program
+    public class Program
     {
-        static async Task Main(string[] args)
+        public static void Main(string[] args)
         {
-            var connection = new HubConnectionBuilder()
-                .WithUrl(Strings.HubUrl)
+            IHost host = new HostBuilder()
+                .ConfigureLogging(logging =>
+                {
+                    logging.AddConsole();
+                })
+                .ConfigureServices((services) =>
+                {
+                    services.AddHostedService<PrintHubClient>();
+                })
                 .Build();
 
-            connection.On<DateTime>(Strings.Events.TimeSent, (dateTime) =>
-            {
-                Console.WriteLine(dateTime.ToString());
-            });
-
-            while (true)
-            {
-                try
-                {
-                    await connection.StartAsync();
-
-                    break;
-                }
-                catch
-                {
-                    await Task.Delay(1000);
-                }
-            }
-
-            Console.WriteLine("Client One listening. Hit Ctrl-C to quit.");
-            Console.ReadLine();
+            host.Run();
         }
     }
 }

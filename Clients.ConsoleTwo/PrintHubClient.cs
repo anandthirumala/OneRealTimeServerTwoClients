@@ -8,12 +8,12 @@ using Microsoft.Extensions.Logging;
 
 namespace Clients.ConsoleTwo
 {
-    public class ClockHubClient : IClock, IHostedService
+    public class PrintHubClient : IPrintNotification, IHostedService
     {
-        private readonly ILogger<ClockHubClient> _logger;
+        private readonly ILogger<PrintHubClient> _logger;
         private readonly HubConnection _connection;
 
-        public ClockHubClient(ILogger<ClockHubClient> logger)
+        public PrintHubClient(ILogger<PrintHubClient> logger)
         {
             _logger = logger;
             
@@ -21,12 +21,27 @@ namespace Clients.ConsoleTwo
                 .WithUrl(Strings.HubUrl)
                 .Build();
 
-            _connection.On<DateTime>(Strings.Events.TimeSent, dateTime => _ = ShowTime(dateTime));
+            _connection.On<string>(
+                nameof(PrintRequestAsync), 
+                async printId => await PrintRequestAsync(printId)
+            );
+
+            _connection.On<string, PrintStatus>(
+                nameof(PrintResponseAsync), 
+                async (printId, status) => await PrintResponseAsync(printId, status)
+            );
         }
 
-        public Task ShowTime(DateTime currentTime)
+        public Task PrintRequestAsync(string printId)
         {
-            _logger.LogInformation($"{currentTime.ToShortTimeString()}");
+            _logger.LogInformation($"printId: {printId}");
+
+            return Task.CompletedTask;
+        }
+
+        public Task PrintResponseAsync(string printId, PrintStatus status)
+        {
+            _logger.LogInformation($"printId: {printId}, status: {status}");
 
             return Task.CompletedTask;
         }
@@ -52,5 +67,6 @@ namespace Clients.ConsoleTwo
         {
             await _connection.StopAsync(cancellationToken);
         }
+
     }
 }
