@@ -65,7 +65,7 @@ namespace Clients.ConsoleOne
                 }
                 catch
                 {
-                    await Task.Delay(1000, cancellationToken);
+                    await Task.Delay(3000, cancellationToken);
                 }
             }
         }

@@ -11,9 +11,9 @@ namespace Server
     public class Worker : BackgroundService
     {
         private readonly ILogger<Worker> _logger;
-        private readonly IHubContext<ClockHub, IClock> _clockHub;
+        private readonly IHubContext<PrintHub, IPrintNotification> _clockHub;
 
-        public Worker(ILogger<Worker> logger, IHubContext<ClockHub, IClock> clockHub)
+        public Worker(ILogger<Worker> logger, IHubContext<PrintHub, IPrintNotification> clockHub)
         {
             _logger = logger;
             _clockHub = clockHub;
@@ -24,8 +24,14 @@ namespace Server
             while (!stoppingToken.IsCancellationRequested)
             {
                 _logger.LogInformation($"Worker running at: {DateTime.Now}");
-                await _clockHub.Clients.All.ShowTime(DateTime.Now);
-                await Task.Delay(1000);
+
+                var printId = Guid.NewGuid().ToString();
+
+                await _clockHub.Clients.All.PrintRequestAsync(printId);
+                await Task.Delay(250, stoppingToken);
+
+                await _clockHub.Clients.All.PrintResponseAsync(printId, PrintStatus.Success);
+                await Task.Delay(1000, stoppingToken);
             }
         }
     }

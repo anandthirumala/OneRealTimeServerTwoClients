@@ -30,7 +30,7 @@ namespace Server
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
-                endpoints.MapHub<ClockHub>("/hubs/clock");
+                endpoints.MapHub<PrintHub>("/print/hub");
             });
         }
     }
