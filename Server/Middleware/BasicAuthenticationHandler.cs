@@ -12,10 +12,13 @@ namespace Server.Middleware
 {
     public class BasicAuthenticationHandler : AuthenticationHandler<AuthenticationSchemeOptions>
     {
-        public BasicAuthenticationHandler(IOptionsMonitor<AuthenticationSchemeOptions> options,
+        public BasicAuthenticationHandler
+        (
+            IOptionsMonitor<AuthenticationSchemeOptions> options,
             ILoggerFactory logger,
             UrlEncoder encoder,
-            ISystemClock clock) : base(options, logger, encoder, clock)
+            ISystemClock clock
+        ) : base(options, logger, encoder, clock)
         {
         }
 
