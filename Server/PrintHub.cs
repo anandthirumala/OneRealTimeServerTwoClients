@@ -1,11 +1,13 @@
 using System;
 using System.Threading.Tasks;
 using HubServiceInterfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Logging;
 
 namespace Server
 {
+    [Authorize]
     public class PrintHub : Hub<IPrintNotification>
     {
         private readonly ILogger<PrintHub> logger;
