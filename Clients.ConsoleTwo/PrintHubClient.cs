@@ -18,8 +18,8 @@ namespace Clients.ConsoleTwo
         {
             _logger = logger;
 
-            const string userName = "4093";
-            const string syncHostPassword = "C8814A75-B4C2-40D3-AAF0-6F05AD558378";
+            const string userName = "4091";
+            const string syncHostPassword = "6EF58574-FE21-4CAF-9F8F-104AB4E31EEB";
             string basicAuthorizationHeader = Convert.ToBase64String(Encoding.UTF8.GetBytes($"{userName}:{syncHostPassword}"));
 
             _connection = new HubConnectionBuilder()
