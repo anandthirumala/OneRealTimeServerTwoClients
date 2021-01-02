@@ -1,3 +1,5 @@
+using System;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using HubServiceInterfaces;
@@ -15,9 +17,13 @@ namespace Clients.ConsoleOne
         public PrintHubClient(ILogger<PrintHubClient> logger)
         {
             _logger = logger;
-            
+
+            const string userName = "4093";
+            const string syncHostPassword = "C8814A75-B4C2-40D3-AAF0-6F05AD558378";
+            string basicAuthorizationHeader = Convert.ToBase64String(Encoding.UTF8.GetBytes($"{userName}:{syncHostPassword}"));
+
             _connection = new HubConnectionBuilder()
-                .WithUrl(Strings.HubUrl)
+                .WithUrl(Strings.HubUrl, options => options.Headers.Add("Authorization", $"Basic {basicAuthorizationHeader}"))
                 .Build();
 
             _connection.On<string>(
