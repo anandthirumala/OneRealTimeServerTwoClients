@@ -26,13 +26,15 @@ namespace Clients.ConsoleTwo
                 .WithUrl(Strings.HubUrl, options => options.Headers.Add("Authorization", $"Basic {basicAuthorizationHeader}"))
                 .Build();
 
+            _connection.Closed += ConnectionClosed;
+
             _connection.On<string>(
-                nameof(PrintRequestAsync), 
+                nameof(PrintRequestAsync),
                 async printId => await PrintRequestAsync(printId)
             );
 
             _connection.On<string, PrintStatus>(
-                nameof(PrintResponseAsync), 
+                nameof(PrintResponseAsync),
                 async (printId, status) => await PrintResponseAsync(printId, status)
             );
         }
@@ -66,6 +68,13 @@ namespace Clients.ConsoleTwo
                     await Task.Delay(1000, cancellationToken);
                 }
             }
+        }
+
+        private async Task ConnectionClosed(Exception ex)
+        {
+            _logger.LogInformation($"SignalR connection closed \n{ex.Message}\n");
+
+            await StartAsync(CancellationToken.None);
         }
 
         public async Task StopAsync(CancellationToken cancellationToken)
