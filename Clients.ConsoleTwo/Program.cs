@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using HubServiceInterfaces;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -19,7 +20,8 @@ namespace Clients.ConsoleTwo
                     })
                     .ConfigureServices((services) =>
                     {
-                        services.AddHostedService<PrintHubClient>();
+                        services.AddScoped<IRemotePrintHubClient, RemotePrintHubClient>();
+                        services.AddHostedService<RemotePrintSendService>();
                     })
                     .Build();
 

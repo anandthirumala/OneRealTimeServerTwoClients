@@ -8,7 +8,7 @@ using Microsoft.Extensions.Logging;
 namespace Server
 {
     [Authorize]
-    public class PrintHub : Hub<IPrintNotification>
+    public class PrintHub : Hub<IRemotePrintNotification>
     {
         private readonly ILogger<PrintHub> logger;
 

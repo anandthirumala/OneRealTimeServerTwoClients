@@ -2,10 +2,8 @@
 
 namespace HubServiceInterfaces
 {
-    public interface IPrintNotification
+    public interface IRemotePrintSendNotification
     {
-        Task PrintRequestAsync(string printId);
-
         Task PrintResponseAsync(string printId, PrintStatus status);
     }
 }

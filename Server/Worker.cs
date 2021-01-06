@@ -11,12 +11,12 @@ namespace Server
     public class Worker : BackgroundService
     {
         private readonly ILogger<Worker> _logger;
-        private readonly IHubContext<PrintHub, IPrintNotification> _clockHub;
+        private readonly IHubContext<PrintHub, IRemotePrintNotification> printHub;
 
-        public Worker(ILogger<Worker> logger, IHubContext<PrintHub, IPrintNotification> clockHub)
+        public Worker(ILogger<Worker> logger, IHubContext<PrintHub, IRemotePrintNotification> printHub)
         {
             _logger = logger;
-            _clockHub = clockHub;
+            this.printHub = printHub;
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -27,10 +27,10 @@ namespace Server
 
                 var printId = Guid.NewGuid().ToString();
 
-                await _clockHub.Clients.All.PrintRequestAsync(printId);
+                await printHub.Clients.All.PrintRequestAsync(printId);
                 await Task.Delay(250, stoppingToken);
 
-                await _clockHub.Clients.All.PrintResponseAsync(printId, PrintStatus.Success);
+                await printHub.Clients.All.PrintResponseAsync(printId, PrintStatus.Success);
                 await Task.Delay(1000, stoppingToken);
             }
         }
