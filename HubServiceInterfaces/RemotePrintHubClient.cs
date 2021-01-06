@@ -9,6 +9,8 @@ namespace HubServiceInterfaces
 {
     public class RemotePrintHubClient : IRemotePrintHubClient
     {
+        private const string hubName = "/print/hub";
+
         private readonly ILogger<RemotePrintHubClient> _logger;
         private HubConnection _connection;
 
@@ -52,8 +54,10 @@ namespace HubServiceInterfaces
             const string syncHostPassword = "C8814A75-B4C2-40D3-AAF0-6F05AD558378";
             string basicAuthorizationHeader = Convert.ToBase64String(Encoding.UTF8.GetBytes($"{userName}:{syncHostPassword}"));
 
+            var uri = new Uri(Strings.HubUrl + hubName);
+
             HubConnection connection = new HubConnectionBuilder()
-                .WithUrl(Strings.HubUrl, options => options.Headers.Add("Authorization", $"Basic {basicAuthorizationHeader}"))
+                .WithUrl(uri, options => options.Headers.Add("Authorization", $"Basic {basicAuthorizationHeader}"))
                 .Build();
 
             connection.Closed += ConnectionClosed;
